@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path"
 	"sort"
 
 	"gopkg.in/src-d/go-git.v4"
@@ -21,11 +20,11 @@ func main() {
 	cwd, err := os.Getwd()
 	CheckError(err)
 
-	dirPtr := flag.String("dir", cwd, "Project root directory path")
+	dirPtr := flag.String("dir", cwd, "Project root directory absolute path")
 	flag.Parse()
 
-	fmt.Printf("Project root: %s\n", path.Join(cwd, *dirPtr))
-	repo, err := git.PlainOpen(path.Join(cwd, *dirPtr))
+	fmt.Printf("Project root: %s\n", *dirPtr)
+	repo, err := git.PlainOpen(*dirPtr)
 	CheckError(err)
 
 	// Get all branches
