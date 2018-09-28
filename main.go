@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	MAX_SESSION_DIFF_MIN      = 120
-	FIRST_COMMIT_ADDITION_MIN = 120
+	MAX_SESSION_DIFF_MIN = 120
 )
 
 func main() {
@@ -51,6 +50,7 @@ func main() {
 	var totalMinutes float64
 	userList := getUsers(commits)
 	userMinutes := make(map[string]float64)
+	firstCommitAddition := getAverageCommitDiff(commits) * 3
 
 	for _, u := range userList {
 		// Use simple heuristic to estimate work
@@ -64,7 +64,7 @@ func main() {
 			if diff.Minutes() <= MAX_SESSION_DIFF_MIN {
 				minutes += diff.Minutes()
 			} else {
-				minutes += FIRST_COMMIT_ADDITION_MIN
+				minutes += firstCommitAddition
 			}
 			i += 1
 		}
@@ -93,4 +93,18 @@ func getUsers(commits CommitList) []string {
 		userList = append(userList, k)
 	}
 	return userList
+}
+
+func getAverageCommitDiff(commits CommitList) float64 {
+	var minutes float64
+	var count int
+	for i := 0; i < len(commits)-1; {
+		diff := commits[i+1].Timestamp.Sub(commits[i].Timestamp)
+		if diff.Minutes() <= MAX_SESSION_DIFF_MIN {
+			minutes += diff.Minutes()
+			count += 1
+		}
+		i += 1
+	}
+	return minutes / float64(count)
 }
