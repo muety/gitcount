@@ -33,3 +33,22 @@ func CheckError(err error) {
 	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
 	os.Exit(1)
 }
+
+type UserMinute struct {
+	Name   string
+	Minute float64
+}
+
+type UserMinutes []*UserMinute
+
+func (l UserMinutes) Len() int {
+	return len(l)
+}
+
+func (l UserMinutes) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
+}
+
+func (l UserMinutes) Less(i, j int) bool {
+	return l[i].Minute < l[j].Minute
+}
