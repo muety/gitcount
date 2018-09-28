@@ -48,17 +48,49 @@ func main() {
 	}
 	sort.Sort(commits)
 
-	// Use simple heuristic to estimate work
 	var totalMinutes float64
-	for i := 0; i < len(commits)-1; {
-		diff := commits[i+1].Timestamp.Sub(commits[i].Timestamp)
-		if diff.Minutes() <= MAX_SESSION_DIFF_MIN {
-			totalMinutes += diff.Minutes()
-		} else {
-			totalMinutes += FIRST_COMMIT_ADDITION_MIN
+	userList := getUsers(commits)
+	userMinutes := make(map[string]float64)
+
+	for _, u := range userList {
+		// Use simple heuristic to estimate work
+		var minutes float64
+		for i := 0; i < len(commits)-1; {
+			if commits[i].Email != u {
+				i += 1
+				continue
+			}
+			diff := commits[i+1].Timestamp.Sub(commits[i].Timestamp)
+			if diff.Minutes() <= MAX_SESSION_DIFF_MIN {
+				minutes += diff.Minutes()
+			} else {
+				minutes += FIRST_COMMIT_ADDITION_MIN
+			}
+			i += 1
 		}
-		i += 1
+		userMinutes[u] = minutes
+		totalMinutes += minutes
 	}
 
-	fmt.Println(totalMinutes)
+	printOut(userMinutes, totalMinutes)
+}
+
+func printOut(userMinutes map[string]float64, totalMinutes float64) {
+	// TODO: Sort by minutes
+	for k, v := range userMinutes {
+		fmt.Printf("%s: %.2f hours\n", k, v/60)
+	}
+	fmt.Printf("---------\nTotal: %.2f hours\n", totalMinutes/60)
+}
+
+func getUsers(commits CommitList) []string {
+	var userList []string
+	userMap := make(map[string]bool)
+	for _, c := range commits {
+		userMap[c.Email] = true
+	}
+	for k := range userMap {
+		userList = append(userList, k)
+	}
+	return userList
 }
