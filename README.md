@@ -1,4 +1,4 @@
-# githours
+# gitcount
 
 [![Say thanks](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/n1try)
 
