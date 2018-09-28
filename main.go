@@ -1,7 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
+	"path"
 	"sort"
 
 	"gopkg.in/src-d/go-git.v4"
@@ -14,12 +17,19 @@ const (
 )
 
 func main() {
-	commitMap := make(map[string]*CommitSummary)
+	// Initialization stuff
+	cwd, err := os.Getwd()
+	CheckError(err)
 
-	repo, err := git.PlainOpen("/home/ferdinand/dev/mininote")
+	dirPtr := flag.String("dir", cwd, "Project root directory path")
+	flag.Parse()
+
+	fmt.Printf("Project root: %s\n", path.Join(cwd, *dirPtr))
+	repo, err := git.PlainOpen(path.Join(cwd, *dirPtr))
 	CheckError(err)
 
 	// Get all branches
+	commitMap := make(map[string]*CommitSummary)
 	branches, err := repo.Branches()
 	CheckError(err)
 
