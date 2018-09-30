@@ -88,8 +88,7 @@ func main() {
 }
 
 func printOut(userMinutes UserMinutes, totalMinutes float64) {
-	// TODO: Sort by minutes
-	sort.Sort(userMinutes)
+	sort.Sort(sort.Reverse(userMinutes))
 	for _, u := range userMinutes {
 		fmt.Printf("%s: %.2f hours\n", u.Name, u.Minute/60)
 	}
