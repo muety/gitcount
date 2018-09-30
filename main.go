@@ -57,8 +57,8 @@ func main() {
 	sort.Sort(commits)
 
 	var totalMinutes float64
+	var userMinutes UserMinutes
 	userList := getUsers(commits)
-	userMinutes := make(map[string]float64)
 	firstCommitAddition := getAverageCommitDiff(commits) * 3
 
 	for _, u := range userList {
@@ -77,17 +77,20 @@ func main() {
 			}
 			i += 1
 		}
-		userMinutes[u] = minutes
+		userMinutes = append(userMinutes, &UserMinute{
+			Name:   u,
+			Minute: minutes,
+		})
 		totalMinutes += minutes
 	}
 
 	printOut(userMinutes, totalMinutes)
 }
 
-func printOut(userMinutes map[string]float64, totalMinutes float64) {
-	// TODO: Sort by minutes
-	for k, v := range userMinutes {
-		fmt.Printf("%s: %.2f hours\n", k, v/60)
+func printOut(userMinutes UserMinutes, totalMinutes float64) {
+	sort.Sort(sort.Reverse(userMinutes))
+	for _, u := range userMinutes {
+		fmt.Printf("%s: %.2f hours\n", u.Name, u.Minute/60)
 	}
 	fmt.Printf("---------\nTotal: %.2f hours\n", totalMinutes/60)
 }
