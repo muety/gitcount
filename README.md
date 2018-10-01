@@ -9,7 +9,7 @@ A command-line tool to estimate the time spent on a git project, based on a very
 * A multiple (x3) of the average time between commits in all sessions is added to the very first commit of every session
 
 ## Example
-```
+```sh
 $ gitcount -dir .
 Project root: /home/ferdinand/dev/mininote
 mail@ferdinand-muetsch.de: 13.06 hours
@@ -22,7 +22,18 @@ fmuetsch@inovex.de: 0.00 hours
 Total: 19.86 hours
 ```
 
-## Requirement
+## Example using Docker
+```sh
+$ docker run --rm -it -v `pwd`:/repo gitcount/gitcount:0.0.1
+Project root: /repo
+mail@ferdinand-muetsch.de: 1.73 hours
+noreply@github.com: 0.65 hours
+u5.horie@gmail.com: 0.65 hours
+---------
+Total: 3.03 hours
+```
+
+## Requirements
 * Go to be installed
 
 ## How to use?
