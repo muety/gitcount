@@ -24,7 +24,7 @@ Total: 19.86 hours
 
 ## Example using Docker
 ```sh
-$ docker run --rm -it -v `pwd`:/repo gitcount/gitcount:0.0.1
+$ docker run --rm -it -v `pwd`:/repo gitcount/gitcount:0.0.2
 Project root: /repo
 mail@ferdinand-muetsch.de: 1.73 hours
 noreply@github.com: 0.65 hours
