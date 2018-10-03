@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sort"
 
 	"gopkg.in/src-d/go-git.v4"
@@ -26,6 +27,15 @@ func main() {
 	fmt.Printf("Project root: %s\n", *dirPtr)
 	repo, err := git.PlainOpen(*dirPtr)
 	CheckError(err)
+
+	var mailmap map[string]*MailMapEntry
+
+	if _, err := os.Stat(filepath.Join(*dirPtr, ".mailmap")); !os.IsNotExist(err) {
+		mailmapFile, err := os.Open(filepath.Join(*dirPtr, ".mailmap"))
+		defer mailmapFile.Close()
+		mailmap, err = ReadMailMap(mailmapFile)
+		CheckError(err)
+	}
 
 	// Get all branches
 	commitMap := make(map[string]*CommitSummary)
@@ -58,14 +68,14 @@ func main() {
 
 	var totalMinutes float64
 	var userMinutes UserMinutes
-	userList := getUsers(commits)
+	userList := getUsers(mailmap, commits)
 	firstCommitAddition := getAverageCommitDiff(commits) * 3
 
 	for _, u := range userList {
 		// Use simple heuristic to estimate work
 		var minutes float64
 		for i := 0; i < len(commits)-1; {
-			if commits[i].Email != u {
+			if commitEmail := commits[i].Email; getEmail(mailmap, commitEmail) != u {
 				i += 1
 				continue
 			}
@@ -78,7 +88,7 @@ func main() {
 			i += 1
 		}
 		userMinutes = append(userMinutes, &UserMinute{
-			Name:   u,
+			Name:   getEmail(mailmap, u),
 			Minute: minutes,
 		})
 		totalMinutes += minutes
@@ -95,11 +105,11 @@ func printOut(userMinutes UserMinutes, totalMinutes float64) {
 	fmt.Printf("---------\nTotal: %.2f hours\n", totalMinutes/60)
 }
 
-func getUsers(commits CommitList) []string {
+func getUsers(mailmap map[string]*MailMapEntry, commits CommitList) []string {
 	var userList []string
 	userMap := make(map[string]bool)
 	for _, c := range commits {
-		userMap[c.Email] = true
+		userMap[getEmail(mailmap, c.Email)] = true
 	}
 	for k := range userMap {
 		userList = append(userList, k)
@@ -119,4 +129,12 @@ func getAverageCommitDiff(commits CommitList) float64 {
 		i += 1
 	}
 	return minutes / float64(count)
+}
+
+func getEmail(mailmap map[string]*MailMapEntry, email string) string {
+	if entry := mailmap[email]; entry != nil {
+		return entry.ProperEmail
+	} else {
+		return email
+	}
 }

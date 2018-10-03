@@ -13,6 +13,11 @@ type CommitSummary struct {
 
 type CommitList []*CommitSummary
 
+type MailMapEntry struct {
+	ProperEmail string
+	CommitEmail string
+}
+
 func (l CommitList) Len() int {
 	return len(l)
 }

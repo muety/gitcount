@@ -16,8 +16,8 @@ FROM scratch
 
 VOLUME ["/repo"]
 
-COPY --from=temp /bin/gitcount /bin/gitcount
-COPY --from=temp /etc/passwd /etc/passwd
+COPY --from=builder /bin/gitcount /bin/gitcount
+COPY --from=builder /etc/passwd /etc/passwd
 
 USER appuser
 
