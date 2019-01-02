@@ -41,4 +41,4 @@ Total: 3.03 hours
 2. `gitcount` or `gitcount -dir /some/project/path`
 
 ## License
-MIT @ [Ferdinand Mütsch](https://ferdinand-muetsch.de)
+MIT @ [Ferdinand Mütsch](https://muetsch.io)
